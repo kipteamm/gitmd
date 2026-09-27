@@ -13,6 +13,19 @@
 </head>
 <body>
     
-    <div class="editor" id="editor"></div>
+    <nav class="container active" id="nav">
+        {% for page in pages %}
+            {{ page }}
+        {% endfor %}
+    </nav>
+
+    <main class="container">
+        <button id="menu">|||</button>
+
+        <section class="workfield">
+            <div class="editor" id="editor"></div>
+            <div class="preview" id="preview"></div>
+        </section>
+    </main>
 </body>
 </html>

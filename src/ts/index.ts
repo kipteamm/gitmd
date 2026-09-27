@@ -1,4 +1,6 @@
+// @ts-ignore
 import "../css/index.css";
+
 import { EditorView, basicSetup } from "codemirror";
 import { EditorState } from "@codemirror/state";
 import { markdown, markdownKeymap } from "@codemirror/lang-markdown";
@@ -27,4 +29,8 @@ const state = EditorState.create({
 
 new EditorView({
     state, parent: elm
+});
+
+document.getElementById("menu")!.addEventListener("click", () => {
+    document.getElementById("nav")!.classList.toggle("active");
 });

@@ -1,0 +1,38 @@
+@import "./base.css";
+
+nav {
+    width: 240px;
+    margin-left: -248px !important;
+    transition: .2s;
+}
+nav.active {
+    margin-left: 8px !important;
+}
+
+main {
+    display: flex;
+    flex-direction: column;
+    padding: 8px;
+    gap: 8px;
+}
+
+.workfield {
+    display: flex;
+    margin: -8px;
+    flex: 1;
+
+    > div {
+        flex: 1;
+    }
+}
+
+.editor {
+    .cm-editor {
+        height: 100%;
+    }
+
+    .cm-scroller {
+        height: 100%;
+        overflow: auto;
+    }
+}
