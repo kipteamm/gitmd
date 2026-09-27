@@ -19,7 +19,7 @@ class Instance(db.Model):
 
 
 class SessionUser(UserMixin):
-    id: str = "master"
+    id: str = "SESSION"
 
     def get_id(self) -> str:
         return self.id

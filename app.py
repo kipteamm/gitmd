@@ -1,13 +1,16 @@
-from werkzeug.security import check_password_hash
+from werkzeug.security import check_password_hash, generate_password_hash
 from database import db, Instance, SessionUser, SESSION_USER
 from dotenv import load_dotenv
+from typing import cast
+from forms import get_errors, SetupForm
+
+import os
 
 from flask_migrate import Migrate
 from flask_login import current_user, AnonymousUserMixin
 from flask_login import LoginManager, login_user
 from flask import Flask, redirect, url_for, request, render_template, flash
 
-import os
 
 
 load_dotenv()
@@ -48,15 +51,30 @@ def index():
     if isinstance(current_user, AnonymousUserMixin):
         return redirect(url_for("login"))
 
-    return ""
+    return render_template("index.html")
 
 
 @app.route("/setup", methods=["GET", "POST"])
 def setup():
     # If an instance already exists, setup cannot be done again.
     if i(): return redirect(url_for("index"))
-    
-    return render_template("setup.html")
+
+    form = SetupForm(request.form)
+    if request.method == "GET":
+        return render_template("setup.html", form=form)
+
+    if not form.validate():
+        flash(get_errors(form), "error")
+        return render_template("setup.html", form=form)
+
+    db.session.add(Instance(
+        generate_password_hash(cast(str, form.password.data))
+    ))
+    db.session.commit()
+
+    login_user(SESSION_USER)
+
+    return redirect(url_for("index"))
 
 
 @app.route("/login", methods=["GET", "POST"])

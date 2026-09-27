@@ -1,0 +1,18 @@
+{
+  "_codemirror-vendor.js": {
+    "file": "codemirror-vendor.js",
+    "name": "codemirror-vendor"
+  },
+  "src/ts/index.ts": {
+    "file": "bundle.js",
+    "name": "index",
+    "src": "src/ts/index.ts",
+    "isEntry": true,
+    "imports": [
+      "_codemirror-vendor.js"
+    ],
+    "css": [
+      "bundle.css"
+    ]
+  }
+}
