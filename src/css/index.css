@@ -4,6 +4,7 @@ nav {
     width: 240px;
     margin-left: -248px !important;
     transition: .2s;
+    padding: 8px;
 }
 nav.active {
     margin-left: 8px !important;

@@ -1,8 +1,9 @@
 from werkzeug.security import check_password_hash, generate_password_hash
-from database import db, Instance, SessionUser, SESSION_USER
+from app.database import db, Instance, SessionUser, SESSION_USER
+from app.forms import get_errors, SetupForm
+from app.pages import PagesTree
 from dotenv import load_dotenv
 from typing import cast
-from forms import get_errors, SetupForm
 
 import os
 
@@ -36,6 +37,7 @@ def load_user(user_id: str) -> SessionUser | None:
 
 
 db.init_app(app)
+pages = PagesTree()
 
 
 # A global instance, created during setup
@@ -51,7 +53,7 @@ def index():
     if isinstance(current_user, AnonymousUserMixin):
         return redirect(url_for("login"))
 
-    return render_template("index.html")
+    return render_template("index.html", pages=pages.get_pages())
 
 
 @app.route("/setup", methods=["GET", "POST"])

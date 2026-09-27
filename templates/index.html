@@ -1,3 +1,5 @@
+{% from "utils/render_pages.html" import render_pages %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -12,16 +14,15 @@
     <script type="module" src="{{ url_for('static', filename='dist/bundle.js') }}"></script>
 </head>
 <body>
-    
-    <nav class="container active" id="nav">
-        {% for page in pages %}
-            {{ page }}
-        {% endfor %}
-    </nav>
 
+    
+    <nav class="container active" id="nav">        
+        {{ render_pages(pages) }}
+    </nav>
+    
     <main class="container">
         <button id="menu">|||</button>
-
+        
         <section class="workfield">
             <div class="editor" id="editor"></div>
             <div class="preview" id="preview"></div>

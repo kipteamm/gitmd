@@ -1,0 +1,21 @@
+{% macro render_pages(node) %}
+{% for child in node.children %}
+    {% if child.type == "directory" %}
+    <li class="tree-item directory">
+        <details open>
+            <summary class="node-label dir-label">
+                {{ child.name }}
+            </summary>
+            {# Recursive call for nested children #}
+            {{ render_pages(child) }}
+        </details>
+    </li>
+    {% else %}
+    <li class="tree-item file">
+        <button type="button" class="node-label file-btn" data-path="{{ child.path }}">
+            {{ child.name }}
+        </button>
+    </li>
+    {% endif %}
+{% endfor %}
+{% endmacro %}
