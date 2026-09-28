@@ -17,9 +17,11 @@ document.getElementById("menu")!.addEventListener("click", () => {
 });
 
 
-(document.querySelectorAll(".file") as NodeListOf<HTMLElement>).forEach(elm => {
+(document.querySelectorAll(".file") as NodeListOf<HTMLButtonElement>).forEach(elm => {
     elm.addEventListener("click", () => 
-        loadFile(view, elm.dataset.path!)
+        loadFile(view, elm)
     );
 });
 
+
+loadFile(view, (document.getElementById("index-file") as HTMLButtonElement));

@@ -6,7 +6,6 @@ import { EditorView, basicSetup } from "codemirror";
 import { render } from "./renderer";
 
 
-const initialMarkdown = "# Markdown";
 const preview = document.getElementById("preview")!;
 
 
@@ -46,6 +45,5 @@ export const DEFAULT_EXTENSIONS: Extension[] = [
 ];
 
 export const DEFAULT_STATE = EditorState.create({
-    doc: initialMarkdown,
     extensions: DEFAULT_EXTENSIONS
 });

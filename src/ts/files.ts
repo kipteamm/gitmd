@@ -8,8 +8,12 @@ let activeFilePath: string | null = null;
 let currentAbortController: AbortController | null = null;
 
 
-export async function loadFile(editorView: EditorView, filePath: string): Promise<void> {
+export async function loadFile(editorView: EditorView, elm: HTMLButtonElement): Promise<void> {
+    const filePath = elm.dataset.path!;
     if (activeFilePath === filePath) return;
+
+    document.querySelector(".file.active")?.classList.remove("active");
+    elm.classList.add("active");
 
     // Save current document state before switching away
     if (activeFilePath)
@@ -20,6 +24,7 @@ export async function loadFile(editorView: EditorView, filePath: string): Promis
     if (cachedState) {
         activeFilePath = filePath;
         editorView.setState(cachedState);
+        renderPreview(editorView.state.doc.toString());
         return;
     }
 

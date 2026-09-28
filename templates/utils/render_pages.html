@@ -1,10 +1,12 @@
 {% macro render_pages(node) %}
+<ul>
 {% for child in node.children %}
     {% if child.type == "directory" %}
     <li>
         <details open>
-            <summary>
-                {{ child.name }}
+            <summary class="flex-ver">
+                {{ child.name.title() }}
+                {% include "icons/marker.html" %}
             </summary>
 
             {{ render_pages(child) }}
@@ -12,10 +14,11 @@
     </li>
     {% else %}
     <li>
-        <button type="button" class="file" data-path="{{ child.path }}">
-            {{ child.name }}
+        <button type="button" class="file" data-path="{{ child.path }}"{% if child.path == 'index.md' %} id="index-file"{% endif %}>
+            {{ child.name.title() }}
         </button>
     </li>
     {% endif %}
 {% endfor %}
+</ul>
 {% endmacro %}

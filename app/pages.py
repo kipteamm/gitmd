@@ -1,4 +1,4 @@
-from app.config import PAGES_DIR
+from app.config import PAGES_DIR, DEFAULT_INDEX_CONTENT
 from pathlib import Path
 from typing import TypedDict, Literal
 
@@ -15,13 +15,23 @@ class FileNode(TypedDict):
 class PagesTree:
 
     def __init__(self) -> None:
-        if not os.path.exists("pages"):
-            os.mkdir("pages")
-
         self.root_path = PAGES_DIR
+        self.root_path.mkdir(parents=True, exist_ok=True)
+
+        self._ensure_index()
 
         self._cached_tree: FileNode | None = None
         self._dir_mtimes: dict[str, float] = {}
+
+
+    def _ensure_index(self) -> None:
+        # Check if the directory is empty using scandir for efficiency
+        with os.scandir(self.root_path) as entries:
+            if any(entries):
+                return
+
+        index_file = self.root_path / "index.md"
+        index_file.write_text(DEFAULT_INDEX_CONTENT, encoding="utf-8")
 
 
     def _is_cache_valid(self) -> bool:

@@ -1,4 +1,9 @@
 :root {
+    --font: "Inter";
+
+    --font-clr: #000;
+    --font-clr-80: #666260;
+
     --bg: #f6f3f3;
     --bg-80: #efedee;
     --bg-60: #dbd7da;
@@ -10,8 +15,15 @@
     box-sizing: border-box;
 }
 
-body {
+body, button, input {
+    font-family: var(--font);
+}
+
+body, ul {
     margin: 0;
+}
+
+body {
     width: 100%;
     height: 100vh;
     display: flex;
@@ -32,6 +44,24 @@ main {
     overflow-y: auto;
 }
 
+details > summary,
 button {
     cursor: pointer;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+details > summary {
+    list-style: none;
+
+    > svg {
+        transition: .2s;
+    }
+}
+details > summary::-webkit-details-marker {
+    display: none;
+}
+
+details:open > summary > svg {
+    transform: rotate(90deg);
 }
