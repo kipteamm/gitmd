@@ -1,4 +1,4 @@
-import { DEFAULT_EXTENSIONS } from "./editor";
+import { DEFAULT_EXTENSIONS, renderPreview } from "./editor";
 import { EditorState } from "@codemirror/state";
 import { EditorView } from "codemirror";
 
@@ -46,6 +46,7 @@ export async function loadFile(editorView: EditorView, filePath: string): Promis
         fileStateCache.set(filePath, newState);
         activeFilePath = filePath;
         editorView.setState(newState);
+        renderPreview(editorView.state.doc.toString());
         
     } catch (err: unknown) {
         if (err instanceof DOMException && err.name === "AbortError")

@@ -11,9 +11,11 @@ const view = new EditorView({
     state: DEFAULT_STATE, parent: elm
 });
 
+
 document.getElementById("menu")!.addEventListener("click", () => {
     document.getElementById("nav")!.classList.toggle("active");
 });
+
 
 (document.querySelectorAll(".file") as NodeListOf<HTMLElement>).forEach(elm => {
     elm.addEventListener("click", () => 
@@ -21,11 +23,3 @@ document.getElementById("menu")!.addEventListener("click", () => {
     );
 });
 
-
-// editorView.dispatch({
-//       changes: {
-//         from: 0,
-//         to: editorView.state.doc.length,
-//         insert: content
-//       }
-//     });
