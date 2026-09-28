@@ -92,9 +92,19 @@ class PagesTree:
                     "children": [],
                 })
 
+        def sort_key(node: FileNode) -> tuple[int, str]:
+            is_readme = node["type"] == "file" and node["name"].casefold() == "readme"
+
+            if is_readme: return (0, "")
+            if node["type"] == "file": return (1, node["name"].casefold())
+
+            return (2, node["name"].casefold())
+
+        children.sort(key=sort_key)
+
         return ({
             "name": current_dir.name,
-            "path": current_dir.relative_to(self.root_path.parent).as_posix(),
+            "path": current_dir.relative_to(self.root_path).as_posix(),
             "type": "directory",
             "children": children,
         })

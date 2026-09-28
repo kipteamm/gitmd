@@ -1,13 +1,17 @@
 from app.config import PAGES_DIR
 from pathlib import Path
+from typing import Any
 
+from flask_login import login_required
 from flask import Blueprint, Response, abort, make_response, request
+
+import shutil
 
 
 api_bp = Blueprint("api", __name__, url_prefix="/api")
 
 
-def resolve_safe_path(path: str) -> Path | None:
+def resolve_safe_path(path: str, is_file: bool) -> Path | None:
     if not path: return None
 
     # Resolve symlinks and normalize traversal dots (../)
@@ -20,6 +24,9 @@ def resolve_safe_path(path: str) -> Path | None:
     if not target.is_relative_to(PAGES_DIR):
         return None
 
+    if not is_file:
+        return target
+
     if not target.is_file() or target.suffix.lower() != ".md":
         return None
 
@@ -27,11 +34,10 @@ def resolve_safe_path(path: str) -> Path | None:
 
 
 @api_bp.get("/file")
-def get_file():
+@login_required
+def get_entity():
     raw_path = request.args.get("path", "").strip()
-    safe_path = resolve_safe_path(raw_path)
-
-    print(safe_path)
+    safe_path = resolve_safe_path(raw_path, True)
 
     if safe_path is None:
         abort(404, description="File not found or access denied")
@@ -56,3 +62,183 @@ def get_file():
     response.headers["Cache-Control"] = "no-cache"
 
     return response
+
+
+@api_bp.put("/file/save")
+@login_required
+def save_file():
+    data: dict[str, Any] | None = request.get_json()
+    if not data:
+        return {"success": False, "message": "Invalid JSON payload"}, 400
+
+    path_str: str = data.get("path", "")
+    content: str = data.get("content", "")
+    
+    target = resolve_safe_path(path_str, True)
+    if not target:
+        return {"success": False, "message": "Invalid path"}, 403
+
+    if target.exists() and not target.is_file():
+        return {"success": False, "message": "Target is not a file"}, 400
+
+    try:
+        target.write_text(content, encoding="utf-8")
+    except OSError as e:
+        return {"success": False, "message": str(e)}, 500
+
+    return {"success": True}, 200
+
+
+@api_bp.post("/file/create")
+@login_required
+def create_entity():
+    data: dict[str, Any] | None = request.get_json()
+    if not data:
+        return {"success": False, "message": "Invalid JSON payload"}, 400
+
+    folder_path: str = data.get("folderPath", "")
+    name: str = data.get("name", "")
+    entity_type: str = data.get("type", "file")
+
+    parent_dir = resolve_safe_path(folder_path, False)
+    if not parent_dir:
+        return {"success": False, "message": "Invalid folder path"}, 403
+
+    target = resolve_safe_path(f"{folder_path}/{name}", False)
+    if not target:
+        return {"success": False, "message": "Invalid target path"}, 403
+
+    if target.exists():
+        return {"success": False, "message": "Entity already exists"}, 409
+
+    try:
+        if entity_type == "directory":
+            target.mkdir(parents=True, exist_ok=True)
+
+            # Create one file in the folder by default
+            index_file = Path(target) / "README.md"
+            index_file.touch()
+        else:
+            target.touch()
+    except OSError as e:
+        return {"success": False, "message": str(e)}, 500
+
+    return {"success": True}, 201
+
+
+@api_bp.patch("/file/rename")
+@login_required
+def rename_entity():
+    data: dict[str, Any] | None = request.get_json()
+    if not data:
+        return {"success": False, "message": "Invalid JSON payload"}, 400
+
+    path_str: str = data.get("path", "")
+    new_name: str = data.get("newName", "")
+
+    target = resolve_safe_path(path_str, True)
+    if not target or not target.exists():
+        return {"success": False, "message": "Invalid or missing path"}, 404
+
+    new_target = target.parent / new_name
+    if not new_target.is_relative_to(PAGES_DIR):
+        return {"success": False, "message": "Invalid new name"}, 403
+
+    if new_target.exists():
+        return {"success": False, "message": "Destination name already in use"}, 409
+
+    try:
+        target.rename(new_target)
+    except OSError as e:
+        return {"success": False, "message": str(e)}, 500
+
+    return {"success": True}, 200
+
+
+@api_bp.delete("/file/delete")
+@login_required
+def delete_entity():
+    data: dict[str, Any] | None = request.get_json()
+    if not data:
+        return {"success": False, "message": "Invalid JSON payload"}, 400
+
+    path_str: str = data.get("path", "")
+    target = resolve_safe_path(path_str, False)
+
+    if not target or not target.exists():
+        return {"success": False, "message": "Invalid or missing path"}, 404
+
+    try:
+        if target.is_dir():
+            shutil.rmtree(target)
+        else:
+            target.unlink()
+    except OSError as e:
+        return {"success": False, "message": str(e)}, 500
+
+    return {"success": True}, 200
+
+
+@api_bp.post("/file/move")
+@login_required
+def move_entity():
+    data: dict[str, Any] | None = request.get_json()
+    if not data:
+        return {"success": False, "message": "Invalid JSON payload"}, 400
+
+    source_str: str = data.get("sourcePath", "")
+    dest_str: str = data.get("destinationDir", "")
+
+    source_target = resolve_safe_path(source_str, True)
+    dest_dir = resolve_safe_path(dest_str, False)
+
+    if not source_target or not dest_dir:
+        return {"success": False, "message": "Invalid paths"}, 403
+
+    if not source_target.exists() or not dest_dir.is_dir():
+        return {"success": False, "message": "Source missing or destination is not a directory"}, 404
+
+    new_target = dest_dir / source_target.name
+    if new_target.exists():
+        return {"success": False, "message": "Destination already exists"}, 409
+
+    try:
+        shutil.move(str(source_target), str(new_target))
+    except OSError as e:
+        return {"success": False, "message": str(e)}, 500
+
+    return {"success": True}, 200
+
+
+@api_bp.post("/file/copy")
+@login_required
+def copy_entity():
+    data: dict[str, Any] | None = request.get_json()
+    if not data:
+        return {"success": False, "message": "Invalid JSON payload"}, 400
+
+    source_str: str = data.get("sourcePath", "")
+    dest_str: str = data.get("destinationDir", "")
+
+    source_target = resolve_safe_path(source_str, True)
+    dest_dir = resolve_safe_path(dest_str, False)
+
+    if not source_target or not dest_dir:
+        return {"success": False, "message": "Invalid paths"}, 403
+
+    if not source_target.exists() or not dest_dir.is_dir():
+        return {"success": False, "message": "Source missing or destination is not a directory"}, 404
+
+    new_target = dest_dir / source_target.name
+    if new_target.exists():
+        return {"success": False, "message": "Destination already exists"}, 409
+
+    try:
+        if source_target.is_dir():
+            shutil.copytree(source_target, new_target)
+        else:
+            shutil.copy2(source_target, new_target)
+    except OSError as e:
+        return {"success": False, "message": str(e)}, 500
+
+    return {"success": True}, 200

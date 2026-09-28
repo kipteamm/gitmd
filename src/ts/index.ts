@@ -4,7 +4,7 @@ import "./editor";
 import "./files";
 
 import { FileTreeManager } from "./fileTreeManager";
-import { FileTreeApi } from "./pagesApi";
+import { api } from "./pagesApi";
 
 
 document.getElementById("menu")!.addEventListener("click", () => {
@@ -12,5 +12,4 @@ document.getElementById("menu")!.addEventListener("click", () => {
 });
 
 
-const api = new FileTreeApi();
 new FileTreeManager(api, () => window.location.reload());

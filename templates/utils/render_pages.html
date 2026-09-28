@@ -15,11 +15,15 @@
     {% else %}
     <li class="tree-item file" data-path="{{ child.path }}" data-type="file" {% if child.path == 'index.md' %} id="index-file"{% endif %}>
         <button type="button" 
-                class="file-btn" 
-                draggable="true" 
+                class="file-btn{% if child.name == 'README' %} flex-ver{% endif %}" 
+                {% if child.name != "README" %} draggable="true"{% endif %} 
                 data-path="{{ child.path }}" 
-                data-type="file">
+                data-type="{% if child.name == 'README' %}readme{% else %}file{% endif %}"
+                {% if child.name == 'README' %} title="This file cannot be removed. You may only edit the contents."{% endif %}>
             {{ child.name.title() }}
+            {% if child.name == "README" %}
+                {% include "icons/lock.html" %}
+            {% endif %}
         </button>
     </li>
     {% endif %}

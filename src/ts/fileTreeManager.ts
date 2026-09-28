@@ -1,6 +1,6 @@
 import { FileTreeApi } from "./pagesApi";
 
-export type TargetType = "file" | "directory" | "nav";
+export type TargetType = "file" | "directory" | "nav" | "readme";
 
 
 export interface TargetContext {
@@ -62,7 +62,7 @@ export class FileTreeManager {
         // Nav allows for new files and folders, but does not have any other
         // contextmenu options
         if (!item || !this.nav.contains(item))
-            return { element: this.nav, type: "nav", path: "/" };
+            return { element: this.nav, type: "nav", path: "." };
 
         const type = (item.getAttribute("data-type") as TargetType);
         const path = item.getAttribute("data-path")!;
@@ -235,7 +235,10 @@ export class FileTreeManager {
                 const res = await this.api.createFile(ctx.path, name.trim());
                 if (!res.success) return alert(res.error);
 
-                this.onTreeMutated();
+                const path = ctx.path + "/" + name.trim();
+
+                window.location.hash = encodeURIComponent(path);
+                window.location.reload();
             }
         });
 
@@ -258,7 +261,7 @@ export class FileTreeManager {
             id: "copy",
             label: "Copy",
             keybind: "Ctrl+C",
-            visible: (type) => type === "file" || type === "directory",
+            visible: (type) => type === "file" || type === "directory" || type === "readme",
             execute: (ctx) => {
                 this.clipboard = { action: "copy", path: ctx.path };
             }
@@ -328,7 +331,8 @@ export class FileTreeManager {
                 const res = await this.api.delete(ctx.path);
                 if (!res.success) return alert(res.error);
 
-                this.onTreeMutated();
+                window.history.back();
+                setTimeout(() => window.location.reload(), 100);
             }
         });
     }

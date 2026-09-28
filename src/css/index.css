@@ -28,6 +28,14 @@ nav {
         text-align: left;
         background: none;
     }
+    
+    button.flex-ver {
+        justify-content: space-between;
+
+        svg {
+            color: var(--font-clr-80);
+        }
+    }
 
     summary:hover, button:hover,
     li.active  button {
@@ -62,6 +70,11 @@ main {
 
 .path-crumbs {
     flex: 1;
+}
+
+#auto-save {
+    font-size: 12px;
+    color: var(--font-clr-80);
 }
 
 .workfield {

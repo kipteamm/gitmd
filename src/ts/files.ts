@@ -7,12 +7,17 @@ import { view } from "./editor";
 const fileStateCache = new Map<string, EditorState>();
 const pathCrums = document.getElementById("path-crumbs")!;
 
-let activeFilePath: string | null = null;
+export let activeFilePath: string | null = null;
 let currentAbortController: AbortController | null = null;
 
 
 function updatePage(path: string, state: EditorState, view: EditorView): void {
-    window.history.pushState({ path }, "", `#${encodeURIComponent(path)}`);
+    const targetHash = `#${encodeURIComponent(path)}`;
+
+    if (window.location.hash === targetHash)
+        window.history.replaceState({ path }, "", targetHash);
+    else
+        window.history.pushState({ path }, "", targetHash);
 
     const crums = path.split("/");
     let crumbsTrail = "Editing ";
@@ -81,14 +86,10 @@ export async function loadFile(elm: HTMLLIElement): Promise<void> {
 
 
 function loadFromHash(path: string): void {
-    console.log(path);
-
     if (!path) return;
     if (path === activeFilePath) return;
 
     const elm = document.querySelector(`[data-path="${path}"]`) as HTMLLIElement;
-    console.log(`[data-path="${path}"]`, elm);
-
     loadFile(elm);
 }
 

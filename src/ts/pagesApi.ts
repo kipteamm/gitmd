@@ -1,10 +1,14 @@
-export interface FileApiResult {
+interface FileApiResult {
     success: boolean;
     error?: string;
 }
 
 export class FileTreeApi {
     private baseUrl = "/api/file";
+
+    public async saveFile(path: string, content: string): Promise<FileApiResult> {
+        return this.request("/save", { method: "PUT", body: JSON.stringify({ path, content }) });
+    }
 
     public async createFile(folderPath: string, name: string): Promise<FileApiResult> {
         return this.request("/create", { method: "POST", body: JSON.stringify({ folderPath, name, type: "file" }) });
@@ -37,14 +41,15 @@ export class FileTreeApi {
                 headers: { "Content-Type": "application/json", ...(options.headers || {}) }
             });
 
-            if (!res.ok) {
-                const data = await res.json().catch(() => ({}));
-                return { success: false, error: data.message || `Request failed with status ${res.status}` };
-            }
+            if (res.ok)
+                return { success: true };
 
-            return { success: true };
+            const data = await res.json().catch(() => ({}));
+            return { success: false, error: data.message || `Request failed with status ${res.status}` };
         } catch (err) {
             return { success: false, error: err instanceof Error ? err.message : "Network error" };
         }
     }
 }
+
+export const api = new FileTreeApi();
