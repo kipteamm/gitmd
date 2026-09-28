@@ -19,17 +19,14 @@ nav {
 
     summary, button {
         width: 100%;
-        padding: 4px 8px;
-        border-radius: 4px;
         margin-bottom: 4px;
         color: var(--font-clr-80);
+        border-radius: 4px;
     }
 
     button {
         text-align: left;
         background: none;
-        border: none;
-        transition: .2s;
     }
 
     summary:hover, button:hover,
@@ -73,4 +70,46 @@ main {
 
 .preview {
     padding: 0 8px;
+}
+
+.context-menu {
+    position: absolute;
+    list-style: none;
+    padding: 0;
+    background: var(--bg-80);
+    border: 1px solid var(--bg-40);
+    padding: 6px 8px;
+    border-radius: 8px;
+    width: 240px;
+
+    li {
+        margin: 2px 0;
+        border-radius: 4px;
+        padding: 2px 20px;
+        transition: .3s;
+        cursor: pointer;
+    }
+    li:hover {
+        background: var(--bg-60);
+    }
+
+    span {
+        float: right;
+        color: var(--font-clr-80);
+    }
+
+    #cut,
+    #new-folder {
+        position: relative;
+        margin-bottom: 8px;
+    }
+    #cut::after,
+    #new-folder::after {
+        content: "";
+        position: absolute;
+        width: 240px;
+        border-top: 1px solid var(--bg-40);
+        bottom: -5px;
+        left: -9px;
+    }
 }

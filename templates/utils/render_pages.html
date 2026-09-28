@@ -1,10 +1,10 @@
 {% macro render_pages(node) %}
-<ul>
+<ul class="file-tree">
 {% for child in node.children %}
     {% if child.type == "directory" %}
-    <li>
+    <li class="tree-item directory" data-path="{{ child.path }}" data-type="directory">
         <details open>
-            <summary class="flex-ver">
+            <summary class="flex-ver" draggable="true" data-path="{{ child.path }}" data-type="directory">
                 {{ child.name.title() }}
                 {% include "icons/marker.html" %}
             </summary>
@@ -13,8 +13,12 @@
         </details>
     </li>
     {% else %}
-    <li>
-        <button type="button" class="file" data-path="{{ child.path }}"{% if child.path == 'index.md' %} id="index-file"{% endif %}>
+    <li class="tree-item file" data-path="{{ child.path }}" data-type="file">
+        <button type="button" 
+                class="file-btn" 
+                draggable="true" 
+                data-path="{{ child.path }}" 
+                data-type="file"{% if child.path == 'index.md' %} id="index-file"{% endif %}>
             {{ child.name.title() }}
         </button>
     </li>

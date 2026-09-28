@@ -1,7 +1,9 @@
 // @ts-ignore
 import "../css/index.css";
 
+import { FileTreeManager } from "./fileTreeManager";
 import { DEFAULT_STATE } from "./editor";
+import { FileTreeApi } from "./pagesApi";
 import { EditorView } from "codemirror";
 import { loadFile } from "./files";
 
@@ -25,3 +27,6 @@ document.getElementById("menu")!.addEventListener("click", () => {
 
 
 loadFile(view, (document.getElementById("index-file") as HTMLButtonElement));
+
+const api = new FileTreeApi();
+new FileTreeManager(api, () => window.location.reload());

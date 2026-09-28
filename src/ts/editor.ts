@@ -9,7 +9,7 @@ import { render } from "./renderer";
 const preview = document.getElementById("preview")!;
 
 
-// Debounce helper to prevent heavy reparsing on every key event
+// Debounce helper to prevent reparsing on every key event
 export function debounce<T extends (... args: any[]) => void>(fn: T, delayMs: number) {
     let timer: number | undefined;
 

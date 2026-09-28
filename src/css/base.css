@@ -3,12 +3,15 @@
 
     --font-clr: #000;
     --font-clr-80: #666260;
+    --font-clr-0: #fff;
 
     --bg: #f6f3f3;
     --bg-80: #efedee;
     --bg-60: #dbd7da;
     --bg-40: #cac8ca;
     --bg-20: #979797;
+
+    --primary: #000;
 }
 
 * {
@@ -44,11 +47,20 @@ main {
     overflow-y: auto;
 }
 
+button {
+    background: var(--primary);
+    color: var(--font-clr-0);
+    border: none;
+    transition: .2s;
+    border-radius: 6px;
+}
+
 details > summary,
 button {
     cursor: pointer;
     font-size: 16px;
     font-weight: 500;
+    padding: 4px 12px;
 }
 
 details > summary {
