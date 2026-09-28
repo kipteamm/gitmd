@@ -1,0 +1,19 @@
+table {
+    border-collapse: collapse;
+}
+
+table, th, td {
+    border: 1px solid var(--bg-60);
+}
+
+th, td {
+    padding: 8px;
+}
+
+tbody tr:nth-child(odd) {
+    background: var(--bg-80);
+}
+
+hr {
+    border-top: 1px solid var(--bg-60);
+}

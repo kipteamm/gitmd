@@ -1,5 +1,6 @@
 @import "./base.css";
 @import "./util.css";
+@import "./tuyauxMd.css";
 @import "katex/dist/katex.min.css";
 @import "highlight.js/styles/github.css";
 
@@ -70,6 +71,11 @@ main {
 
 .path-crumbs {
     flex: 1;
+
+    span {
+        font-size: 13px;
+        color: var(--font-clr-80);
+    }
 }
 
 #auto-save {

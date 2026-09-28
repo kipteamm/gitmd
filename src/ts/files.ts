@@ -20,7 +20,7 @@ function updatePage(path: string, state: EditorState, view: EditorView): void {
         window.history.pushState({ path }, "", targetHash);
 
     const crums = path.split("/");
-    let crumbsTrail = "Editing ";
+    let crumbsTrail = "";
 
     for (let i = 1; i < crums.length; i++) {
         crumbsTrail += `<span>${crums[i-1]} &rsaquo;</span> `;

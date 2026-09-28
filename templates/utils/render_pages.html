@@ -20,7 +20,7 @@
                 data-path="{{ child.path }}" 
                 data-type="{% if child.name == 'README' %}readme{% else %}file{% endif %}"
                 {% if child.name == 'README' %} title="This file cannot be removed. You may only edit the contents."{% endif %}>
-            {{ child.name.title() }}
+            {{ child.name[0].title() + child.name[1:] }}
             {% if child.name == "README" %}
                 {% include "icons/lock.html" %}
             {% endif %}
