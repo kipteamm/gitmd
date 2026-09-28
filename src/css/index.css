@@ -30,7 +30,7 @@ nav {
     }
 
     summary:hover, button:hover,
-    button.active {
+    li.active  button {
         background: var(--bg-60);
         color: var(--font-clr);
     }
@@ -84,6 +84,11 @@ main {
     .cm-scroller {
         height: 100%;
         overflow: auto;
+    }
+
+    .cm-gutters {
+        border-color: var(--bg-60);
+        background: var(--bg);
     }
 }
 

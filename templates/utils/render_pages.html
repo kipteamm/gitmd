@@ -13,12 +13,12 @@
         </details>
     </li>
     {% else %}
-    <li class="tree-item file" data-path="{{ child.path }}" data-type="file">
+    <li class="tree-item file" data-path="{{ child.path }}" data-type="file" {% if child.path == 'index.md' %} id="index-file"{% endif %}>
         <button type="button" 
                 class="file-btn" 
                 draggable="true" 
                 data-path="{{ child.path }}" 
-                data-type="file"{% if child.path == 'index.md' %} id="index-file"{% endif %}>
+                data-type="file">
             {{ child.name.title() }}
         </button>
     </li>

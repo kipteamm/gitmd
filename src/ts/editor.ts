@@ -30,7 +30,6 @@ const livePreview = EditorView.updateListener.of((update) => {
 });
 
 
-
 export const DEFAULT_EXTENSIONS: Extension[] = [
     livePreview,
     basicSetup,
@@ -46,4 +45,10 @@ export const DEFAULT_EXTENSIONS: Extension[] = [
 
 export const DEFAULT_STATE = EditorState.create({
     extensions: DEFAULT_EXTENSIONS
+});
+
+
+const elm = document.getElementById("editor")!;
+export const view = new EditorView({
+    state: DEFAULT_STATE, parent: elm
 });

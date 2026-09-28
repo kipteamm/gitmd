@@ -1,6 +1,7 @@
 import { DEFAULT_EXTENSIONS, renderPreview } from "./editor";
 import { EditorState } from "@codemirror/state";
 import { EditorView } from "codemirror";
+import { view } from "./editor";
 
 
 const fileStateCache = new Map<string, EditorState>();
@@ -11,17 +12,19 @@ let currentAbortController: AbortController | null = null;
 
 
 function updatePage(path: string, state: EditorState, view: EditorView): void {
+    window.history.pushState({ path }, "", `#${encodeURIComponent(path)}`);
+
     const crums = path.split("/");
     let crumbsTrail = "Editing ";
 
     for (let i = 1; i < crums.length; i++) {
-        crumbsTrail += `${crums[i-1]} > `;
+        crumbsTrail += `<span>${crums[i-1]} &rsaquo;</span> `;
     }
 
     const fileName = crums[crums.length - 1];
     crumbsTrail += fileName.substring(0, fileName.length - 3); // remove .md
 
-    pathCrums.textContent = crumbsTrail;
+    pathCrums.innerHTML = crumbsTrail;
 
     activeFilePath = path;
     view.setState(state);
@@ -29,7 +32,7 @@ function updatePage(path: string, state: EditorState, view: EditorView): void {
 }
 
 
-export async function loadFile(view: EditorView, elm: HTMLButtonElement): Promise<void> {
+export async function loadFile(elm: HTMLLIElement): Promise<void> {
     const filePath = elm.dataset.path!;
     if (activeFilePath === filePath) return;
 
@@ -75,3 +78,32 @@ export async function loadFile(view: EditorView, elm: HTMLButtonElement): Promis
         console.error("Failed to load file:", err);
     }
 }
+
+
+function loadFromHash(path: string): void {
+    console.log(path);
+
+    if (!path) return;
+    if (path === activeFilePath) return;
+
+    const elm = document.querySelector(`[data-path="${path}"]`) as HTMLLIElement;
+    console.log(`[data-path="${path}"]`, elm);
+
+    loadFile(elm);
+}
+
+
+window.addEventListener("popstate", (event: PopStateEvent) => {
+    const path = event.state?.path ?? decodeURIComponent(window.location.hash.slice(1));
+    loadFromHash(path);
+});
+
+
+(document.querySelectorAll(".file") as NodeListOf<HTMLLIElement>).forEach(elm => {
+    elm.addEventListener("click", () => 
+        loadFile(elm)
+    );
+});
+
+
+loadFromHash(decodeURIComponent(window.location.hash.slice(1)) || "index.md");
