@@ -12,6 +12,7 @@
     --bg-20: #979797;
 
     --primary: #000;
+    --primary-80: #4c4c4c;
 }
 
 * {
@@ -53,6 +54,9 @@ button {
     border: none;
     transition: .2s;
     border-radius: 6px;
+}
+button:hover {
+    background: var(--primary-80);
 }
 
 details > summary,

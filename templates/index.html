@@ -21,12 +21,14 @@
     </nav>
     
     <main class="container">
-        <div>
-            <button id="menu">|||</button>
+        <div class="flex-ver toolbar">
+            <button id="menu" style="line-height:24px">
+                {% include "icons/menu.html" %}
+            </button>
 
-            Editing <span id="file">index.md</span>
+            <p class="path-crumbs id="path-crumbs">Editing index</p>
             
-            <button>Save</button>
+            <button title="Ctrl+S">Save</button>
         </div>
         
         <section class="workfield">

@@ -4,11 +4,32 @@ import { EditorView } from "codemirror";
 
 
 const fileStateCache = new Map<string, EditorState>();
+const pathCrums = document.getElementById("path-crumbs")!;
+
 let activeFilePath: string | null = null;
 let currentAbortController: AbortController | null = null;
 
 
-export async function loadFile(editorView: EditorView, elm: HTMLButtonElement): Promise<void> {
+function updatePage(path: string, state: EditorState, view: EditorView): void {
+    const crums = path.split("/");
+    let crumbsTrail = "Editing ";
+
+    for (let i = 1; i < crums.length; i++) {
+        crumbsTrail += `${crums[i-1]} > `;
+    }
+
+    const fileName = crums[crums.length - 1];
+    crumbsTrail += fileName.substring(0, fileName.length - 3); // remove .md
+
+    pathCrums.textContent = crumbsTrail;
+
+    activeFilePath = path;
+    view.setState(state);
+    renderPreview(view.state.doc.toString());
+}
+
+
+export async function loadFile(view: EditorView, elm: HTMLButtonElement): Promise<void> {
     const filePath = elm.dataset.path!;
     if (activeFilePath === filePath) return;
 
@@ -17,16 +38,12 @@ export async function loadFile(editorView: EditorView, elm: HTMLButtonElement): 
 
     // Save current document state before switching away
     if (activeFilePath)
-        fileStateCache.set(activeFilePath, editorView.state);
+        fileStateCache.set(activeFilePath, view.state);
 
     // Cache switch if already loaded in session
     const cachedState = fileStateCache.get(filePath);
-    if (cachedState) {
-        activeFilePath = filePath;
-        editorView.setState(cachedState);
-        renderPreview(editorView.state.doc.toString());
-        return;
-    }
+    if (cachedState)
+        return updatePage(filePath, cachedState, view);
 
     // Abort prior in-flight network request if user clicks quickly
     if (currentAbortController)
@@ -49,9 +66,7 @@ export async function loadFile(editorView: EditorView, elm: HTMLButtonElement): 
         });
 
         fileStateCache.set(filePath, newState);
-        activeFilePath = filePath;
-        editorView.setState(newState);
-        renderPreview(editorView.state.doc.toString());
+        return updatePage(filePath, newState, view);
         
     } catch (err: unknown) {
         if (err instanceof DOMException && err.name === "AbortError")

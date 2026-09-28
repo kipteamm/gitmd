@@ -46,7 +46,26 @@ main {
     gap: 8px;
 }
 
+#menu svg {
+    height: 16px;
+}
+
+.toolbar {
+    button {
+        height: 28px;
+    }
+
+    p {
+        margin: 0
+    }
+}
+
+.path-crumbs {
+    flex: 1;
+}
+
 .workfield {
+    border-top: 1px solid var(--bg-60);
     display: flex;
     margin: -8px;
     margin-top: 0;
@@ -70,6 +89,7 @@ main {
 
 .preview {
     padding: 0 8px;
+    border-left: 1px solid var(--bg-60);
 }
 
 .context-menu {
