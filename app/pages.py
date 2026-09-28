@@ -1,16 +1,15 @@
-from __future__ import annotations
-
-import os
-
+from app.config import PAGES_DIR
 from pathlib import Path
 from typing import TypedDict, Literal
+
+import os
 
 
 class FileNode(TypedDict):
     name: str
     path: str
     type: Literal["file", "directory"]
-    children: list[FileNode]
+    children: list["FileNode"]
 
 
 class PagesTree:
@@ -19,7 +18,7 @@ class PagesTree:
         if not os.path.exists("pages"):
             os.mkdir("pages")
 
-        self.root_path = Path("pages").resolve()
+        self.root_path = PAGES_DIR
 
         self._cached_tree: FileNode | None = None
         self._dir_mtimes: dict[str, float] = {}
@@ -77,7 +76,7 @@ class PagesTree:
 
                 rel_path = path.relative_to(self.root_path).as_posix()
                 children.append({
-                    "name": entry.name,
+                    "name": entry.name[:-3],
                     "path": rel_path,
                     "type": "file",
                     "children": [],

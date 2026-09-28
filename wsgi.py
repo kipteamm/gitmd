@@ -2,6 +2,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from app.database import db, Instance, SessionUser, SESSION_USER
 from app.forms import get_errors, SetupForm
 from app.pages import PagesTree
+from app.api import api_bp
 from dotenv import load_dotenv
 from typing import cast
 
@@ -22,6 +23,8 @@ app = Flask(__name__)
 app.config["DEBUG"] = os.getenv("DEBUG", "false") == "true"
 app.config["SECRET_KEY"] = os.environ["SECRET_KEY"]
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///./db.sqlite3"
+
+app.register_blueprint(api_bp)
 
 
 login_manager = LoginManager(app)
