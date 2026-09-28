@@ -1,9 +1,8 @@
 import { defineConfig } from "vite";
 import { resolve } from "node:path";
 
-
 export default defineConfig({
-    base: "/static/",
+    base: "/static/dist/",
     build: {
         outDir: "static/dist",
         emptyOutDir: true,
@@ -13,14 +12,18 @@ export default defineConfig({
             output: {
                 entryFileNames: "bundle.js",
                 chunkFileNames: "[name].js",
-                assetFileNames: "bundle.[ext]",
-                
+                assetFileNames: (assetInfo) => {
+                    if (assetInfo.names?.some((name) => name.endsWith(".css"))) {
+                        return "bundle.[ext]";
+                    }
+                    return "assets/[name]-[hash].[ext]";
+                },
                 manualChunks(id: string) {
-                    if (!id.includes("node_modules"))
-                        return;
+                    if (!id.includes("node_modules")) return;
 
-                    if (id.includes("@codemirror") || id.includes("codemirror") || id.includes("@lezer"))
+                    if (id.includes("@codemirror") || id.includes("codemirror") || id.includes("@lezer")) {
                         return "codemirror-vendor";
+                    }
 
                     return "vendor";
                 }
@@ -28,4 +31,3 @@ export default defineConfig({
         }
     }
 });
-

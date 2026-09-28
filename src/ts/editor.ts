@@ -1,8 +1,8 @@
 import { defaultKeymap, historyKeymap, indentWithTab } from "@codemirror/commands";
-import { markdown, markdownKeymap } from "@codemirror/lang-markdown";
 import { EditorState, type Extension } from "@codemirror/state";
-import { keymap } from "@codemirror/view";
+import { markdown, markdownKeymap } from "@codemirror/lang-markdown";
 import { EditorView, basicSetup } from "codemirror";
+import { keymap } from "@codemirror/view";
 import { render } from "./renderer";
 
 

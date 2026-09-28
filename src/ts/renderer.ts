@@ -6,6 +6,7 @@ import hljs from "highlight.js";
 const marked = new Marked(
     markedKatex({
         throwOnError: false,
+        nonStandard: true,
         output: "html"
     })
 );
