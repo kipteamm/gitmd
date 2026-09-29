@@ -3,7 +3,7 @@ FROM node:24-alpine AS frontend-builder
 WORKDIR /app
 COPY package*.json tsconfig.json vite.config.ts ./
 RUN npm ci
-COPY src ./src
+COPY frontend ./frontend
 COPY templates ./templates
 RUN npm run build
 

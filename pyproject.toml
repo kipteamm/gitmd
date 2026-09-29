@@ -19,5 +19,8 @@ dependencies = [
 [project.scripts]
 gitmd = "wsgi:main"
 
+[tool.setuptools] 
+packages = ["app"]
+
 [tool.setuptools.package-data]
 "*" = ["templates/**/*", "static/**/*"]

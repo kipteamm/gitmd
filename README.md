@@ -26,11 +26,15 @@ python app.py
 ```
 gitmd
 ├─ app
-│  ├─ api.py
+│  ├─ api_views.py
 │  ├─ config.py
 │  ├─ database.py
 │  ├─ forms.py
-│  └─ pages.py
+│  ├─ pages.py
+│  ├─ views.py
+│  └─ __init__.py
+├─ Dockerfile
+├─ gitmd.py
 ├─ instance
 ├─ migrations
 │  ├─ alembic.ini
@@ -41,8 +45,7 @@ gitmd
 │     └─ d56d249b1b61_initial.py
 ├─ package-lock.json
 ├─ package.json
-├─ pages
-│  └─ the pages dir is read from and seen as documentation root (this can be changed for the purpose of the project)
+├─ pyproject.toml
 ├─ README.md
 ├─ src
 │  ├─ css
@@ -75,7 +78,6 @@ gitmd
 │  └─ utils
 │     └─ render_pages.html
 ├─ tsconfig.json
-├─ vite.config.ts
-└─ wsgi.py
+└─ vite.config.ts
 
 ```

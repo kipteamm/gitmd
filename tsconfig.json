@@ -8,5 +8,5 @@
         "skipLibCheck": true,
         "isolatedModules": true
     },
-    "include": ["src"]
+    "include": ["frontend"]
 }

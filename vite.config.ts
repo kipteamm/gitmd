@@ -8,7 +8,7 @@ export default defineConfig({
         emptyOutDir: true,
         manifest: true,
         rollupOptions: {
-            input: resolve(import.meta.dirname, "src/ts/index.ts"),
+            input: resolve(import.meta.dirname, "frontend/ts/index.ts"),
             output: {
                 entryFileNames: "bundle.js",
                 chunkFileNames: "[name].js",
