@@ -136,7 +136,8 @@ def rename_entity():
     path_str: str = data.get("path", "")
     new_name: str = data.get("newName", "")
 
-    target = resolve_safe_path(path_str, True)
+    # This is used for directories and files (=> is_file cannot be True)
+    target = resolve_safe_path(path_str, False)
     if not target or not target.exists():
         return {"success": False, "message": "Invalid or missing path"}, 404
 
@@ -189,7 +190,8 @@ def move_entity():
     source_str: str = data.get("sourcePath", "")
     dest_str: str = data.get("destinationDir", "")
 
-    source_target = resolve_safe_path(source_str, True)
+    # One can also move a directory so should not be a file
+    source_target = resolve_safe_path(source_str, False)
     dest_dir = resolve_safe_path(dest_str, False)
 
     if not source_target or not dest_dir:
@@ -199,6 +201,7 @@ def move_entity():
         return {"success": False, "message": "Source missing or destination is not a directory"}, 404
 
     new_target = dest_dir / source_target.name
+    print(new_target)
     if new_target.exists():
         return {"success": False, "message": "Destination already exists"}, 409
 

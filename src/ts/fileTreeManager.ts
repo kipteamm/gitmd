@@ -1,3 +1,4 @@
+import { activeFilePath } from "./files";
 import { FileTreeApi } from "./pagesApi";
 
 export type TargetType = "file" | "directory" | "nav" | "readme";
@@ -235,7 +236,9 @@ export class FileTreeManager {
                 const res = await this.api.createFile(ctx.path, name.trim());
                 if (!res.success) return alert(res.error);
 
-                const path = ctx.path + "/" + name.trim();
+                let path = ctx.path + "/" + name.trim();
+                if (path.startsWith("./"))
+                    path = path.substring(2, path.length);
 
                 window.location.hash = encodeURIComponent(path);
                 window.location.reload();
@@ -304,18 +307,26 @@ export class FileTreeManager {
             visible: (type) => type === "file" || type === "directory",
             execute: async (ctx) => {
                 const currentName = ctx.path.split("/").pop() || "";
-                const newName = window.prompt(
+                const newName = (window.prompt(
                     "Enter new name (don't include file extensions):",
-                    // Remove .md extension and re-add it later
-                    currentName.substring(0, currentName.length - 3)
-                ) + ".md";
+                    // Remove .md extension for files and re-add it later 
+                    currentName.substring(
+                        0, currentName.length - (ctx.type === "file"? 3: 0)
+                    )
+                ) || currentName).trim() + (ctx.type === "file"? ".md": "");
 
-                if (!newName?.trim() || newName.trim() === currentName) return;
+                if (newName.trim() === currentName) return;
 
-                const res = await this.api.rename(ctx.path, newName.trim());
+                const res = await this.api.rename(ctx.path, newName);
                 if (!res.success) return alert(res.error);
 
-                this.onTreeMutated();
+                if (activeFilePath === ctx.path) {
+                    const path = ctx.path.substring(0, ctx.path.length - currentName.length) + newName;
+                    window.history.replaceState({ path }, "", `#${encodeURIComponent(path)}`);
+                }
+
+                // Little delay so that window history can execute
+                setTimeout(() => window.location.reload(), 100);
             }
         });
 
@@ -332,6 +343,7 @@ export class FileTreeManager {
                 if (!res.success) return alert(res.error);
 
                 window.history.back();
+                // Little delay so that window history can execute
                 setTimeout(() => window.location.reload(), 100);
             }
         });

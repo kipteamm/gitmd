@@ -1,7 +1,6 @@
-# TOdo
+# Todo
 
-1. directory renaming
-2. autosaving
-3. directory moving
-4. cut files should desaturate
+1. fix directory moving UI (highlight the folder)
+2. Fix direcotry moving UX (allow to drag onto file (would pick parent directory))
+3. cut files should desaturate
 

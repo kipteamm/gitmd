@@ -32,7 +32,9 @@ function autoSave(text: string): void {
         status.textContent = "Saving...";
         abortController = new AbortController();
         
-        await api.saveFile(activeFilePath!, text);
+        const response = await api.saveFile(activeFilePath!, text);
+        if (!response.success)
+            return alert(response.error);
 
         status.textContent = "Saved";
 
