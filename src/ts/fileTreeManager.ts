@@ -99,7 +99,6 @@ export class FileTreeManager {
         if (!target || !this.draggedPath) return;
 
         const context = this.getTargetContext(target);
-        if (context.type === "file") return; // Cannot drop onto a file
 
         // Prevent dragging folder into itself or parent
         if (context.path === this.draggedPath || context.path.startsWith(`${this.draggedPath}/`))
@@ -116,8 +115,11 @@ export class FileTreeManager {
         if (!target || !this.draggedPath) return;
 
         const context = this.getTargetContext(target);
-        // Cannot drop onto a file
-        if (context.type === "file") return;
+
+        if (context.type === "file" || context.type === "readme") {
+            const parts = context.path.split("/"); parts.pop();
+            context.path = parts.join("/") || "./";
+        }
 
         const source = this.draggedPath;
         this.draggedPath = null;
@@ -277,6 +279,7 @@ export class FileTreeManager {
             visible: (type) => type === "file" || type === "directory",
             execute: (ctx) => {
                 this.clipboard = { action: "cut", path: ctx.path };
+                ctx.element.classList.add("cut");
             }
         });
 

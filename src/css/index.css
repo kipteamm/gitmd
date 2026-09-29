@@ -29,12 +29,18 @@ nav {
         text-align: left;
         background: none;
     }
-    
+
+    button.cut {
+        opacity: .4;
+        color: var(--font-clr-80);
+    }
+
     button.flex-ver {
         justify-content: space-between;
 
         svg {
             color: var(--font-clr-80);
+            height: 12px;
         }
     }
 
