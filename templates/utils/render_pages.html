@@ -4,7 +4,7 @@
     {% if child.type == "directory" %}
     <li class="tree-item directory" data-path="{{ child.path }}" data-type="directory">
         <details open>
-            <summary class="flex-ver" draggable="true" data-path="{{ child.path }}" data-type="directory">
+            <summary class="flex-ver" draggable="true">
                 {{ child.name.title() }}
                 {% include "icons/marker.html" %}
             </summary>

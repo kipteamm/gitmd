@@ -18,6 +18,11 @@ nav {
         padding: 0;
     }
 
+    li {
+        border: 1px dashed transparent;
+        border-radius: 4px;
+    }
+
     summary, button {
         width: 100%;
         margin-bottom: 4px;
@@ -52,6 +57,10 @@ nav {
 }
 nav.active {
     margin-left: 8px !important;
+}
+
+.destination {
+    border-color: var(--primary);
 }
 
 main {

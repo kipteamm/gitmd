@@ -32,6 +32,7 @@ export class FileTreeManager {
     private clipboard: ClipboardPayload | null = null;
     private activeContext: TargetContext | null = null;
     private draggedPath: string | null = null;
+    private currentDropTargetElement: HTMLElement | null = null;
     private nav = document.getElementById("nav")!;
 
     constructor(
@@ -54,7 +55,25 @@ export class FileTreeManager {
         // Drag & Drop
         this.nav.addEventListener("dragstart", this.onDragStart);
         this.nav.addEventListener("dragover", this.onDragOver);
+        this.nav.addEventListener("dragleave", this.onDragLeave);
+        this.nav.addEventListener("dragend", this.onDragEnd);
         this.nav.addEventListener("drop", this.onDrop);
+    }
+
+    private getDirectory(path: string): string {
+        const parts = path.split("/"); parts.pop();
+        return parts.join("/") || "./";
+    }
+
+    private getDirectoryElement(target: HTMLElement): HTMLElement | null {
+        const dirItem = target.closest<HTMLElement>(".tree-item.directory");
+        if (dirItem && this.nav.contains(dirItem))
+            return dirItem;
+
+        if (this.nav.contains(target))
+            return this.nav;
+
+        return null;
     }
 
     private getTargetContext(target: HTMLElement): TargetContext {
@@ -74,6 +93,21 @@ export class FileTreeManager {
     // -------------------
     // Drag and Drop Logic
     // -------------------
+
+    private clearDropHighlight(): void {
+        if (!this.currentDropTargetElement) return;
+
+        this.currentDropTargetElement.classList.remove("destination");
+        this.currentDropTargetElement = null;
+    }
+
+    private setDropHighlight(element: HTMLElement): void {
+        if (this.currentDropTargetElement === element) return;
+
+        this.clearDropHighlight();
+        this.currentDropTargetElement = element;
+        this.currentDropTargetElement.classList.add("destination");
+    }
 
     private onDragStart = (e: DragEvent): void => {
         const target = e.target as HTMLElement;
@@ -95,31 +129,54 @@ export class FileTreeManager {
     };
 
     private onDragOver = (e: DragEvent): void => {
-        const target = e.target as HTMLElement;
+        const target = e.target as HTMLElement | null;
         if (!target || !this.draggedPath) return;
 
-        const context = this.getTargetContext(target);
-
-        // Prevent dragging folder into itself or parent
-        if (context.path === this.draggedPath || context.path.startsWith(`${this.draggedPath}/`))
+        const dirElement = this.getDirectoryElement(target);
+        if (!dirElement) {
+            this.clearDropHighlight();
             return;
+        }
+
+        const destPath = dirElement === this.nav 
+            ? "." 
+            : (dirElement.dataset.path || ".");
+
+        // Prevent dragging folder into itself or its own subdirectories
+        if (target.dataset.path === this.draggedPath || destPath.startsWith(`${this.draggedPath}/`)) {
+            this.clearDropHighlight();
+            return;
+        }
 
         e.preventDefault();
         e.dataTransfer!.dropEffect = "move";
+
+        this.setDropHighlight(dirElement);
+    };
+
+    private onDragLeave = (e: DragEvent): void => {
+        const related = e.relatedTarget as Node | null;
+        if (this.currentDropTargetElement && !this.currentDropTargetElement.contains(related)) {
+            this.clearDropHighlight();
+        }
+    };
+
+    private onDragEnd = (): void => {
+        this.draggedPath = null;
+        this.clearDropHighlight();
     };
 
     private onDrop = async (e: DragEvent): Promise<void> => {
         e.preventDefault();
+        this.clearDropHighlight();
 
         const target = e.target as HTMLElement;
         if (!target || !this.draggedPath) return;
 
         const context = this.getTargetContext(target);
 
-        if (context.type === "file" || context.type === "readme") {
-            const parts = context.path.split("/"); parts.pop();
-            context.path = parts.join("/") || "./";
-        }
+        if (context.type === "file" || context.type === "readme")
+            context.path = this.getDirectory(context.path)
 
         const source = this.draggedPath;
         this.draggedPath = null;
