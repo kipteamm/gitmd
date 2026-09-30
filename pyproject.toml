@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=84.0.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "gitmd"
+version = "0.1.0"
+description = "Self-hosted local markdown editor for git repos"
+dependencies = [
+    "flask",
+    "flask-login",
+    "flask-migrate",
+    "flask-sqlalchemy",
+    "python-dotenv",
+    "alembic",
+    "werkzeug",
+    "wtforms",
+    "gunicorn"
+]
+
+[project.scripts]
+gitmd = "gitmd:main"
+
+[tool.poetry.scripts]
+gitmd = "gitmd:main"
+
+[tool.setuptools] 
+packages = ["app"]
+py-modules = ["gitmd"]
+
+[tool.setuptools.package-data]
+"*" = ["templates/**/*", "static/**/*"]

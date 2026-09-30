@@ -2,13 +2,13 @@ import { defineConfig } from "vite";
 import { resolve } from "node:path";
 
 export default defineConfig({
-    base: "/static/dist/",
+    base: "/app/static/dist/",
     build: {
         outDir: "static/dist",
         emptyOutDir: true,
         manifest: true,
         rollupOptions: {
-            input: resolve(import.meta.dirname, "src/ts/index.ts"),
+            input: resolve(import.meta.dirname, "frontend/ts/index.ts"),
             output: {
                 entryFileNames: "bundle.js",
                 chunkFileNames: "[name].js",

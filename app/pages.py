@@ -1,8 +1,16 @@
-from app.config import PAGES_DIR, DEFAULT_INDEX_CONTENT
 from pathlib import Path
 from typing import TypedDict, Literal
 
 import os
+
+
+DEFAULT_INDEX_CONTENT = """# Welcome
+
+Glad to see you successfully booted your gitmd instance. Edit this page or 
+create new markdown files to get started.
+
+gitmd supports all default markdown, Latex and code(blocks).
+"""
 
 
 class FileNode(TypedDict):
@@ -14,8 +22,8 @@ class FileNode(TypedDict):
 
 class PagesTree:
 
-    def __init__(self) -> None:
-        self.root_path = PAGES_DIR
+    def __init__(self, target_dir: str) -> None:
+        self.root_path = Path(target_dir)
         self.root_path.mkdir(parents=True, exist_ok=True)
 
         self._ensure_index()
