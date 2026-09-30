@@ -4,7 +4,6 @@ WORKDIR /app
 COPY package*.json tsconfig.json vite.config.ts ./
 RUN npm ci
 COPY frontend ./frontend
-COPY templates ./templates
 RUN npm run build
 
 # Stage 2: Python Runtime
@@ -14,20 +13,30 @@ WORKDIR /app
 ENV PYTHONUNBUFFERED=1 \
     GITMD_DATA_DIR=/data
 
-# Install dependencies
+# Install third-party dependencies first to maximize caching
 COPY pyproject.toml .
-RUN pip install --no-cache-dir .
+RUN pip install --no-cache-dir --no-deps -e . || pip install --no-cache-dir \
+    flask \
+    flask-login \
+    flask-migrate \
+    flask-sqlalchemy \
+    python-dotenv \
+    alembic \
+    werkzeug \
+    wtforms \
+    gunicorn
 
-# Copy backend source and compiled static assets
+# Copy application source and frontend build
 COPY app ./app
-COPY templates ./templates
-COPY wsgi.py .
-COPY --from=frontend-builder /app/static/dist ./static/dist
+COPY gitmd.py .
+COPY migrations ./migrations
+COPY --from=frontend-builder /app/static/dist ./app/static/dist
 
-# Expose container port
+RUN pip install --no-cache-dir --no-deps .
+
 EXPOSE 5000
 
-# Mount points: /docs for markdown files, /data for sqlite DB
+# Mount points, /docs for markdown files, /data for sqlite DB
 VOLUME ["/docs", "/data"]
 
-ENTRYPOINT ["python", "wsgi.py", "/docs", "--host", "0.0.0.0"]
+ENTRYPOINT ["gunicorn", "-w", "2", "-b", "0.0.0.0:5000", "wsgi:app"]

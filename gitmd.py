@@ -1,6 +1,10 @@
 import argparse
 from pathlib import Path
 from app import create_app
+from dotenv import load_dotenv
+
+
+load_dotenv()
 
 
 def main() -> None:

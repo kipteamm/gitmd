@@ -13,7 +13,9 @@ dependencies = [
     "flask-sqlalchemy",
     "python-dotenv",
     "alembic",
-    "werkzeug"
+    "werkzeug",
+    "wtforms",
+    "gunicorn"
 ]
 
 [project.scripts]
@@ -24,6 +26,7 @@ gitmd = "gitmd:main"
 
 [tool.setuptools] 
 packages = ["app"]
+py-modules = ["gitmd"]
 
 [tool.setuptools.package-data]
 "*" = ["templates/**/*", "static/**/*"]

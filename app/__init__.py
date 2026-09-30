@@ -1,6 +1,5 @@
 import os
 from pathlib import Path
-from dotenv import load_dotenv
 from flask import Flask
 from flask_login import LoginManager
 from flask_migrate import Migrate, upgrade
@@ -10,8 +9,6 @@ from app.database import SESSION_USER, SessionUser, db
 from app.pages import PagesTree
 from app.views import app_bp
 
-
-load_dotenv()
 
 
 def create_app(target_dir: Path, data_dir: Path | None = None) -> Flask:
