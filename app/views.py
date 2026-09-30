@@ -1,7 +1,7 @@
 from flask_login import current_user, AnonymousUserMixin, login_user
-from flask import Blueprint, redirect, url_for, render_template, request, flash
+from flask import Blueprint, redirect, url_for, render_template, request, flash, current_app
 from app.database import db, Instance, SESSION_USER
-from app.pages import pages
+from app.pages import PagesTree
 from app.forms import SetupForm, get_errors
 from werkzeug.security import check_password_hash, generate_password_hash
 from typing import cast
@@ -21,6 +21,8 @@ def index():
 
     if isinstance(current_user, AnonymousUserMixin):
         return redirect(url_for("app.login"))
+
+    pages: PagesTree = current_app.extensions["PAGES"]
 
     return render_template("index.html", pages=pages.get_pages())
 

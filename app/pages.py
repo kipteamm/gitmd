@@ -1,9 +1,16 @@
-from app.config import PAGES_DIR, DEFAULT_INDEX_CONTENT
 from pathlib import Path
 from typing import TypedDict, Literal
-from flask import current_app
 
 import os
+
+
+DEFAULT_INDEX_CONTENT = """# Welcome
+
+Glad to see you successfully booted your gitmd instance. Edit this page or 
+create new markdown files to get started.
+
+gitmd supports all default markdown, Latex and code(blocks).
+"""
 
 
 class FileNode(TypedDict):
@@ -128,6 +135,3 @@ class PagesTree:
         self._cached_tree = self._build_tree(self.root_path)
 
         return self._cached_tree
-
-
-pages = PagesTree(current_app.config["DOCS_ROOT"])

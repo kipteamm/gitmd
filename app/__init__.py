@@ -7,6 +7,7 @@ from flask_migrate import Migrate, upgrade
 
 from app.api_views import api_bp
 from app.database import SESSION_USER, SessionUser, db
+from app.pages import PagesTree
 from app.views import app_bp
 
 
@@ -35,6 +36,8 @@ def create_app(target_dir: Path, data_dir: Path | None = None) -> Flask:
     login_manager = LoginManager(app)
     Migrate(app, db)
     db.init_app(app)
+
+    app.extensions["PAGES"] = PagesTree(app.config["DOCS_ROOT"])
 
     # Automatically apply latest migrations and create tables (if they don't 
     # already exist)

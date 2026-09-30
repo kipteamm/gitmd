@@ -10,8 +10,7 @@ def main() -> None:
     parser.add_argument(
         "target",
         nargs="?",
-        default=".",
-        help="Path to repository or docs root (defaults to current dir)",
+        help="Path to repository or docs root (use '.' for current dir)",
     )
     parser.add_argument(
         "--port",
@@ -26,7 +25,11 @@ def main() -> None:
     )
     args = parser.parse_args()
 
+    if not args.target:
+        parser.error("Target dir required.")
+
     target_path = Path(args.target).resolve()
+    
     app = create_app(target_dir=target_path)
     app.run(host=args.host, port=args.port)
 

@@ -1,9 +1,8 @@
-from app.config import PAGES_DIR
 from pathlib import Path
 from typing import Any
 
 from flask_login import login_required
-from flask import Blueprint, Response, abort, make_response, request
+from flask import Blueprint, Response, abort, make_response, request, current_app
 
 import shutil
 
@@ -13,15 +12,16 @@ api_bp = Blueprint("api", __name__, url_prefix="/api")
 
 def resolve_safe_path(path: str, is_file: bool) -> Path | None:
     if not path: return None
+    docs_root = current_app.config["DOCS_ROOT"]
 
     # Resolve symlinks and normalize traversal dots (../)
     try:
-        target = (PAGES_DIR / path).resolve()
+        target = (docs_root / path).resolve()
         print(target)
     except (ValueError, OSError): return None
 
-    # Target must strictly be inside PAGES_DIR
-    if not target.is_relative_to(PAGES_DIR):
+    # Target must strictly be inside DOCS_ROOT
+    if not target.is_relative_to(docs_root):
         return None
 
     if not is_file:
@@ -142,7 +142,7 @@ def rename_entity():
         return {"success": False, "message": "Invalid or missing path"}, 404
 
     new_target = target.parent / new_name
-    if not new_target.is_relative_to(PAGES_DIR):
+    if not new_target.is_relative_to(current_app.config["DOCS_ROOT"]):
         return {"success": False, "message": "Invalid new name"}, 403
 
     if new_target.exists():
